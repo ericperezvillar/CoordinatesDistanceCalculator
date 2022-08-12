@@ -12,7 +12,6 @@ namespace Application.DTOs
         [Required]
         public GeoCoordinate SecondCoordinate { get; set; }
 
-        [Required]
-        public MeasuringUnit MeasuringUnit { get; set; }
+        public MeasuringUnit? MeasuringUnit { get; set; }
     }
 }

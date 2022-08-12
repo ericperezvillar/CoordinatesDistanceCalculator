@@ -4,7 +4,7 @@ using System;
 
 namespace CoreLog.Logger
 {
-    public class Logger : ICoreLogger
+    public class CoreLogger : ICoreLogger
     {
         public Guid Error(string message, Exception ex, string caller, object request)
         {

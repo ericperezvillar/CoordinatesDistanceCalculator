@@ -5,8 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CoreLog\CoreLog.csproj" />
     <ProjectReference Include="..\DataModel\DataModel.csproj" />
+    <ProjectReference Include="..\Infrastructure.DataAccess\Infrastructure.DataAccess.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

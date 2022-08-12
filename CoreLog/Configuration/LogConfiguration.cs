@@ -1,4 +1,6 @@
-﻿using CoreLog.Settings;
+﻿using CoreLog.Interfaces;
+using CoreLog.Logger;
+using CoreLog.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -12,6 +14,8 @@ namespace CoreLog
         {
             var coreLogConfiguration = configuration.GetSection("CoreLogConfiguration");
             services.Configure<SettingConfiguration>(coreLogConfiguration);
+            services.AddScoped<ICoreLogger, CoreLogger>();
+
             var settingsConfiguration = configuration.Get<SettingConfiguration>();
             var logFile = GetLogFilePath(settingsConfiguration);
 
@@ -25,6 +29,10 @@ namespace CoreLog
                 .WriteTo.File(logFile, rollingInterval: RollingInterval.Day, shared: true)
                 .CreateLogger();
 
+            services.AddLogging((builder) =>
+            {
+                builder.AddSerilog(dispose: true);
+            });
         }
 
         private static string GetLogFilePath(SettingConfiguration settingsConfiguration)

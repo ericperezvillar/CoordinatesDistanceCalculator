@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
 
 namespace Application.Enums
 {
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MeasuringUnit
     {
+        [EnumMember(Value = "Kilometre")]
         Kilometre = 1,
 
-        Miles = 2,
+        [EnumMember(Value = "Metres")]
+        Metres = 2,
 
-        Metres = 3
+        [EnumMember(Value = "Miles")]
+        Miles = 3,       
+
+        [EnumMember(Value = "Feets")]
+        Feets = 4
     }
 }

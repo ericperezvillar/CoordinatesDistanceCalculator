@@ -4,18 +4,22 @@ using Application.Helpers;
 using Application.Interfaces;
 using Application.Wrappers;
 using CoreLog.Interfaces;
+using Infrastructure.DataAccess.Interfaces;
 using System;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace Application.Services
 {
     public class DistanceService : IDistanceService
     {
         private readonly ICoreLogger _coreLogger;
+        private readonly IMeasureRepository _measureRepository;
 
-        public DistanceService(ICoreLogger coreLogger)
+        public DistanceService(ICoreLogger coreLogger, IMeasureRepository measureRepository)
         {
             _coreLogger = coreLogger;
+            _measureRepository = measureRepository;
         }
 
         public async Task<Response<DistanceCalculatorResult>> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
@@ -23,6 +27,16 @@ namespace Application.Services
             try
             {
                 var result = new DistanceCalculatorResult();
+
+                MeasuringUnit measuringUnit;
+
+                if (request.MeasuringUnit == null)
+                    measuringUnit = MeasuringUnit.Kilometre;
+                //else
+                   var t = await _measureRepository.GetAllAsync();
+
+
+                _coreLogger.Info("GetDistanceBetweenCoordinates running");
 
                 return new SuccessResponse<DistanceCalculatorResult>(result);
 
@@ -41,10 +55,10 @@ namespace Application.Services
         {
 
             // Converts from degrees to radians.           
-            var lat1 = toRadians(latitud1);
-            var lon1 = toRadians(longitud1);
-            var lat2 = toRadians(latitud2);
-            var lon2 = toRadians(longitud2);
+            var lat1 = DataFormatConvertor.ConvertToRadians(latitud1);
+            var lon1 = DataFormatConvertor.ConvertToRadians(longitud1);
+            var lat2 = DataFormatConvertor.ConvertToRadians(latitud2);
+            var lon2 = DataFormatConvertor.ConvertToRadians(longitud2);
 
             // Haversine formula
             double dlon = lon2 - lon1;
