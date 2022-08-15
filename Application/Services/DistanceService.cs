@@ -4,6 +4,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using Application.Wrappers;
 using CoreLog.Interfaces;
+using DataModel.Measures;
 using Infrastructure.DataAccess.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -14,68 +15,58 @@ namespace Application.Services
     public class DistanceService : IDistanceService
     {
         private readonly ICoreLogger _coreLogger;
-        private readonly IMeasureRepository _measureRepository;
+        private readonly IMeasureCache _measureCache;
+        private readonly IGeometricFigureMeasureRepository _geometricFigureMeasureRepository;
+        private readonly ICoordinatesValidator _coordinatesValidator;
+        private readonly IHaversineCalculator _haversineCalculator;
 
-        public DistanceService(ICoreLogger coreLogger, IMeasureRepository measureRepository)
+        public DistanceService(ICoreLogger coreLogger, IMeasureCache measureCache, IHaversineCalculator haversineCalculator, IGeometricFigureMeasureRepository geometricFigureMeasureRepository, ICoordinatesValidator coordinatesValidator)
         {
             _coreLogger = coreLogger;
-            _measureRepository = measureRepository;
+            _measureCache = measureCache;
+            _haversineCalculator = haversineCalculator;
+            _geometricFigureMeasureRepository = geometricFigureMeasureRepository;
+            _coordinatesValidator = coordinatesValidator;
         }
 
-        public async Task<Response<DistanceCalculatorResult>> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
+        public async Task<Response<string>> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
         {
             try
             {
-                var result = new DistanceCalculatorResult();
-
-                MeasuringUnit measuringUnit;
-
-                if (request.MeasuringUnit == null)
-                    measuringUnit = MeasuringUnit.Kilometre;
-                //else
-                   var t = await _measureRepository.GetAllAsync();
-
-
                 _coreLogger.Info("GetDistanceBetweenCoordinates running");
 
-                return new SuccessResponse<DistanceCalculatorResult>(result);
+                if(!_coordinatesValidator.AreValidCoordinates(request.FirstCoordinate.Latitud, request.FirstCoordinate.Longitud, request.SecondCoordinate.Latitud, request.SecondCoordinate.Longitud))
+                    return new InvalidResponse<string>(new string[] { "Coordinates are not valid." });
+
+                // Get from cache the Measure value
+                var measure = request.MeasuringUnit == null ? await _measureCache.GetMeasureByNameAsync(MeasuringUnit.Kilometres.ToString()) : await _measureCache.GetMeasureByNameAsync(request.MeasuringUnit.ToString());
+
+                // For simplicity, I calculate the distance between coordinates only in the Earth.
+                // It could be extended to more planets. In this case, we will need to have an extra parameter for the GeometricFigure.
+                // This is something to be more generic and getting/setting  the GeometricFigure before calling 
+                var earthMeasureByUnit = await _geometricFigureMeasureRepository.GetEarthMeasure(measure.Id);
+
+                if(earthMeasureByUnit == null)
+                    return new InvalidResponse<string>(new string[] { "Earth measure wasn't found." });
+
+                // Converts from degrees to radians.           
+                var lat1 = DataFormatConvertor.ConvertToRadians(request.FirstCoordinate.Latitud);
+                var lon1 = DataFormatConvertor.ConvertToRadians(request.FirstCoordinate.Longitud);
+                var lat2 = DataFormatConvertor.ConvertToRadians(request.SecondCoordinate.Latitud);
+                var lon2 = DataFormatConvertor.ConvertToRadians(request.SecondCoordinate.Longitud);
+
+                // Distance on a sphere: The Haversine Formula
+                var distance = _haversineCalculator.GetDistanceSphere(lat1, lon1, lat2, lon2);
+
+                var resultBetweenCoordinates = (distance * earthMeasureByUnit.Distance);
+
+                return new SuccessResponse<string>($"The distance in Earth between the given coordinates is: {resultBetweenCoordinates.ToString("0.00")} {measure.Abbreviation}");
 
             }
             catch (Exception ex)
             {
-                return new ErrorHandler<DistanceCalculatorResult>(_coreLogger).LogError("Failed to get distance between coordinates", ex, request);
+                return new ErrorHandler<string>(_coreLogger).LogError("Failed to get distance between coordinates", ex, request);
             }
-        }
-
-        private double CalculateDistance(double latitud1,
-                               double longitud1,
-                               double latitud2,
-                               double longitud2,
-                               MeasuringUnit measuringUnit)
-        {
-
-            // Converts from degrees to radians.           
-            var lat1 = DataFormatConvertor.ConvertToRadians(latitud1);
-            var lon1 = DataFormatConvertor.ConvertToRadians(longitud1);
-            var lat2 = DataFormatConvertor.ConvertToRadians(latitud2);
-            var lon2 = DataFormatConvertor.ConvertToRadians(longitud2);
-
-            // Haversine formula
-            double dlon = lon2 - lon1;
-            double dlat = lat2 - lat1;
-            double a = Math.Pow(Math.Sin(dlat / 2), 2) +
-                       Math.Cos(lat1) * Math.Cos(lat2) *
-                       Math.Pow(Math.Sin(dlon / 2), 2);
-
-            double c = 2 * Math.Asin(Math.Sqrt(a));
-
-            // Radius of earth in
-            // kilometers. Use 3956
-            // for miles
-            double r = 6371;
-
-            // calculate the result
-            return (c * r);
         }
     }
 }

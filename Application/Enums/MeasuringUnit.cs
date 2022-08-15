@@ -7,16 +7,16 @@ namespace Application.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MeasuringUnit
     {
-        [EnumMember(Value = "Kilometre")]
-        Kilometre = 1,
+        [EnumMember(Value = "Kilometres")]
+        Kilometres,
 
         [EnumMember(Value = "Metres")]
-        Metres = 2,
+        Metres,
 
         [EnumMember(Value = "Miles")]
-        Miles = 3,       
+        Miles,       
 
         [EnumMember(Value = "Feets")]
-        Feets = 4
+        Feets
     }
 }

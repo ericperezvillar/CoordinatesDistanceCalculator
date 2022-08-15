@@ -27,9 +27,8 @@ namespace WebApi
 
             services.AddApplicationLayer(Configuration);
             services.AddDataAccessLayer();
-
+            services.AddMemoryCache();
             services.AddCors();
-
             services.AddCustomerSwagger();
         }
 

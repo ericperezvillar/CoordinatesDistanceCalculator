@@ -1,12 +1,12 @@
-﻿using Application.Wrappers;
+﻿using Application.Interfaces;
+using Application.Wrappers;
 using CoreLog.Interfaces;
 using System;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Application.Helpers
 {
-    public class ErrorHandler<T>
+    public class ErrorHandler<T> : IErrorHandler<T>
     {
         private readonly ICoreLogger _coreLogger;
 

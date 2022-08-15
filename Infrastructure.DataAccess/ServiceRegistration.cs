@@ -19,21 +19,16 @@ namespace Infrastructure.DataAccess
             services.AddDbContext<CalculatorContext>(opt => opt.UseInMemoryDatabase(Guid.NewGuid().ToString()));
             services.AddScoped<CalculatorContext>();
 
-            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IMeasureRepository, MeasureRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IMeasureRepository, MeasureRepository>();
+            services.AddScoped<IGeometricFigureRepository, GeometricFigureRepository>();
+            services.AddScoped<IGeometricFigureMeasureRepository, GeometricFigureMeasureRepository>();
 
             //using var context = new CalculatorContext(options);
 
             //context.Database.EnsureDeleted();
             //context.Database.EnsureCreated();
 
-            //context.AddRange(
-            //    new Measure { Id = 1, Name = "Metres", Abbreviation = "m", Description = "Metres", Active = true },
-            //    new Measure { Id = 1, Name = "Kilometres", Abbreviation = "km", Description = "Kilometres", Active = true },
-            //    new Measure { Id = 1, Name = "Miles", Abbreviation = "mi", Description = "Miles", Active = true },
-            //    new Measure { Id = 1, Name = "Feets", Abbreviation = "ft", Description = "Feets", Active = true });
-
-            //context.SaveChanges();
         }
     }
 }

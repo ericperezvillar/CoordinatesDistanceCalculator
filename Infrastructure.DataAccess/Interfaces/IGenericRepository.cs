@@ -7,6 +7,8 @@ namespace Infrastructure.DataAccess.Interfaces
     {
         Task<IReadOnlyList<T>> GetAllAsync();
 
+        Task<T> Get(int id);
+
         Task<T> AddAsync(T entity);
     }
 }

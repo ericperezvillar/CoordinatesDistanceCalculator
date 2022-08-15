@@ -3,9 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using CoreLog.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Attributes;
 
@@ -24,6 +22,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("GetDistanceBetweenCoordinates")]
         [ValidateModel]
         public async Task<IActionResult> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
         {

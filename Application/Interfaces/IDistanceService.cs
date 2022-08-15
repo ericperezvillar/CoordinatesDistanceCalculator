@@ -6,6 +6,6 @@ namespace Application.Interfaces
 {
     public interface IDistanceService
     {
-        Task<Response<DistanceCalculatorResult>> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request);
+        Task<Response<string>> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request);
     }
 }
