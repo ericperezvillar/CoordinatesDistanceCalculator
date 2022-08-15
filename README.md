@@ -18,3 +18,12 @@ Given the coordinates of two cities:
 And knowing that the radius of the earth is R = 6371 km create a c# web api .net core application that receives as input the coordinates and returns its distance in Km.
 
 It takes only the Earth as GeometricFigure. It could be expanded in the future.
+
+
+## Technology
+
+- .Net Core 3.1
+- Swagger
+- MemoryCache
+- Serilog
+- EFCore
