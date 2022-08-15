@@ -21,9 +21,14 @@ namespace WebApi.Controllers
             _coreLogger = coreLogger;
         }
 
+        /// <summary>
+        /// Get the distance between 2 coordinates in the Earth 
+        /// </summary>
+        /// <param name="request">FirstCoordinate and SecondCoordinate are mandatories values. Measure unit is Optional.</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetDistanceBetweenCoordinates")]
-        [ValidateModel]
+        [ValidateModel]        
         public async Task<IActionResult> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
         {
             try
@@ -31,7 +36,10 @@ namespace WebApi.Controllers
                 var result = await _distanceService.GetDistanceBetweenCoordinates(request);
 
                 if (!result.Succeeded)
+                {
+                    _coreLogger.Warning(string.Join(";", result.Messages) );
                     return BadRequest(result);
+                }
 
                 return Ok(result);
             }

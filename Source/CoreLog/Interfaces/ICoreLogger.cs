@@ -21,6 +21,6 @@ namespace CoreLog.Interfaces
         /// <returns></returns>
         Guid Error(string message, Exception ex, object request);
 
-        void Warning(string message, object request);
+        void Warning(string message);
     }
 }

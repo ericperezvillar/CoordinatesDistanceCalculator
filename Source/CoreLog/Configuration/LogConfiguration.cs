@@ -14,7 +14,7 @@ namespace CoreLog
         {
             var coreLogConfiguration = configuration.GetSection("CoreLogConfiguration");
             services.Configure<SettingConfiguration>(coreLogConfiguration);
-            services.AddScoped<ICoreLogger, CoreLogger>();
+            services.AddSingleton<ICoreLogger, CoreLogger>();
 
             var settingsConfiguration = coreLogConfiguration.Get<SettingConfiguration>();
             var logFile = GetLogFilePath(settingsConfiguration);

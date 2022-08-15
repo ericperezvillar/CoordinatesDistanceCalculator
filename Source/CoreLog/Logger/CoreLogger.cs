@@ -19,7 +19,7 @@ namespace CoreLog.Logger
             Log.Logger.Information(message);
         }
 
-        public void Warning(string message, object request)
+        public void Warning(string message)
         {
             Log.Logger.ForContext("Exception", null)
                 .Warning(message);
