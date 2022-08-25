@@ -5,7 +5,7 @@ using System;
 
 namespace Application.Helpers
 {
-    public class ErrorHandler<T> : IErrorHandler<T>
+    public class ErrorHandler<T> 
     {
         private readonly ICoreLogger _coreLogger;
 

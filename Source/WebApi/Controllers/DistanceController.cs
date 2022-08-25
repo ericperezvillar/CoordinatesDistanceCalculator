@@ -32,7 +32,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetDistanceBetweenCoordinates(DistanceCalculatorRequest request)
         {
             try
-            {
+            {                
                 var result = await _distanceService.GetDistanceBetweenCoordinates(request);
 
                 if (!result.Succeeded)
